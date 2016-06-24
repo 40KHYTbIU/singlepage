@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Single page application</title>
+  <script src="/js/angular.min.js"></script>
+  <script src="/js/jquery-2.2.4.min.js"></script>
+  <script src="/js/recordsApp.js"></script>
+  <link rel="stylesheet" type="text/css" href="/css/recordsApp.css" media="screen"/>
+</head>
+<body>
+
+<div ng-app="recordsApp">
+  <div ng-controller="RecordsCtrl">
+
+    <table>
+      <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Date</th>
+      </tr>
+      <tr ng-repeat="record in records">
+        <td>{{record.id}}</td>
+        <td>{{record.name}}</td>
+        <td>{{record.date | date:'medium'}}</td>
+      </tr>
+    </table>
+    <div class="wrapper">
+      <button ng-click="loadRecords()">More...</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

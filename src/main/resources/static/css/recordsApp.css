@@ -1,0 +1,19 @@
+table {
+  border: 1px solid #666;
+  width: 80%;
+  margin: 10px auto;
+}
+
+th {
+  background: #f8f8f8;
+  font-weight: bold;
+  padding: 2px;
+}
+
+button {
+  margin: 10px auto;
+}
+
+.wrapper {
+  text-align: center;
+}
