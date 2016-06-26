@@ -11,19 +11,29 @@
 <body>
 
 <div ng-app="recordsApp">
-  <div ng-controller="RecordsCtrl">
+  <div ng-controller="RecordsCtrl" data-ng-init="loadRecords()">
 
+    <div>Sort: {{sortField}} {{sortDirection}}</div> <button ng-click="changeFilter()">Apply filters</button>
     <table>
+      <thead>
       <tr>
-        <th>Id</th>
-        <th>Name</th>
-        <th>Date</th>
+        <th><a ng-click="changeSort('ID')">Id</a></th>
+        <th><a ng-click="changeSort('NAME')">Name</a></th>
+        <th><a ng-click="changeSort('DATE')">Date</a></th>
       </tr>
+      <tr>
+        <th><input type="text" ng-model="idFilter"></th>
+        <th><input type="text" ng-model="nameFilter"></th>
+        <th><input type="text" ng-model="dateFilter"></th>
+      </tr>
+      </thead>
+      <tbody>
       <tr ng-repeat="record in records">
         <td>{{record.id}}</td>
         <td>{{record.name}}</td>
         <td>{{record.date | date:'medium'}}</td>
       </tr>
+      </tbody>
     </table>
     <div class="wrapper">
       <button ng-click="loadRecords()">More...</button>
