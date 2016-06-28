@@ -3,6 +3,7 @@ package com.kaduchka.controllers;
 import com.kaduchka.common.*;
 import com.kaduchka.dao.RecordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +14,7 @@ import java.util.Collections;
 public class RecordsController {
 
     @Autowired
+    @Qualifier("redis")
     RecordRepository recordRepository;
 
     @InitBinder

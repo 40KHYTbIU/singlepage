@@ -17,8 +17,8 @@ import java.util.stream.Stream;
 
 import static com.kaduchka.common.Direction.ASC;
 
-@Component
-public class RecordRepositoryImpl implements RecordRepository {
+@Component("inMemory")
+public class MemoryRepositoryImpl implements RecordRepository {
     private Collection<Record> records;
     private Random random = new Random();
 

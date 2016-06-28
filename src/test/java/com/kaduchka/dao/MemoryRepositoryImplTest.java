@@ -11,13 +11,13 @@ import java.util.Collection;
 
 import static com.kaduchka.common.Direction.DESC;
 
-public class RecordRepositoryImplTest extends TestCase {
+public class MemoryRepositoryImplTest extends TestCase {
 
-  private RecordRepository repository = new RecordRepositoryImpl();
+  private RecordRepository repository = new MemoryRepositoryImpl();
 
   @Override
   public void setUp() throws Exception {
-    ((RecordRepositoryImpl) repository).init();
+    ((MemoryRepositoryImpl) repository).init();
   }
 
   @Test
