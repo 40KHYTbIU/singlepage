@@ -11,11 +11,11 @@ public interface RecordRepository {
   /**
    * Return filtered and sorted collection of records
    *
-   * @param fieldFilter - map < fieldName, filterValue >
+   * @param filter      - filter
    * @param sortField   - field for sort
    * @param offset      - offset for records
    * @param limit       - records limit
    * @return            - record collection
    */
-  Collection<Record> getRecords(Filter fieldFilter, Sort sortField, int offset, int limit);
+  Collection<Record> getRecords(Filter filter, Sort sortField, int offset, int limit);
 }

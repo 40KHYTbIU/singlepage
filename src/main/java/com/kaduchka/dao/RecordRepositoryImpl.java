@@ -1,74 +1,92 @@
 package com.kaduchka.dao;
 
-import com.kaduchka.common.Fields;
 import com.kaduchka.common.Filter;
 import com.kaduchka.common.Record;
 import com.kaduchka.common.Sort;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
-import java.util.Map;
+import java.util.Random;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static com.kaduchka.common.Sort.Direction.ASC;
-import static java.util.stream.Collectors.toSet;
+import static com.kaduchka.common.Direction.ASC;
 
 @Component
 public class RecordRepositoryImpl implements RecordRepository {
-  private Collection<Record> records;
+    private Collection<Record> records;
+    private Random random = new Random();
 
-  @PostConstruct
-  public void init() {
-    records = IntStream.range(0, 1_000_000).mapToObj(i -> new Record(i, "Record#" + i, new Date())).collect(toSet());
-  }
-
-  @Override
-  public Collection<Record> getRecords(Filter fieldFilter, Sort sortField, int offset, int limit) {
-    Stream<Record> recordStream = records.stream();
-
-    if (fieldFilter != null) {
-      if (fieldFilter.getId() != null) {
-        recordStream = recordStream.filter(r -> fieldFilter.getId() == (r.getId()));
-      }
-      if (fieldFilter.getName() != null) {
-        recordStream = recordStream.filter(r -> r.getName().contains((String) fieldFilter.getName()));
-      }
-      if (fieldFilter.getDate() != null) {
-        recordStream = recordStream.filter(r -> r.getDate().equals(fieldFilter.getDate()));
-      }
+    @PostConstruct
+    public void init() {
+        records = IntStream.range(0, 1_000_000).parallel().mapToObj(i ->
+                new Record(Long.valueOf(i),
+                        "Record#" + i * random.nextInt(3),
+                        new Date(new Date().getTime() - random.nextInt(1_000)),
+                        new BigDecimal((((double) random.nextInt(1_000_000)) / 100D)), Collections.singleton("fucNum")))
+                .collect(Collectors.toList());
     }
 
-    if (sortField != null) {
-      switch (sortField.getField()) {
-        case ID:
-          if (sortField.getDirection().equals(ASC)) {
-            recordStream = recordStream.sorted((e1, e2) -> Long.compare(e1.getId(), e2.getId()));
-          } else {
-            recordStream = recordStream.sorted((e1, e2) -> Long.compare(e2.getId(), e1.getId()));
-          }
-          break;
-        case NAME:
-          if (sortField.getDirection().equals(ASC)) {
-            recordStream = recordStream.sorted((e1, e2) -> e1.getName().compareTo(e2.getName()));
-          } else {
-            recordStream = recordStream.sorted((e1, e2) -> e2.getName().compareTo(e1.getName()));
-          }
+    @Override
+    public Collection<Record> getRecords(Filter filter, Sort sortField, int offset, int limit) {
+        Stream<Record> recordStream = records.stream().parallel();
 
-          break;
-        case DATE:
-          if (sortField.getDirection().equals(ASC)) {
-            recordStream = recordStream.sorted((e1, e2) -> e1.getDate().compareTo(e2.getDate()));
-          } else {
-            recordStream = recordStream.sorted((e1, e2) -> e2.getDate().compareTo(e1.getDate()));
-          }
-          break;
-      }
+        if (filter != null) {
+                if (filter.getFilterId() != null) {
+                    recordStream = recordStream.filter(r -> r.getId().equals(filter.getFilterId()));
+                }
+                if (filter.getFilterNumber()  != null) {
+                    recordStream = recordStream.filter(r -> r.getNumber().contains(filter.getFilterNumber()));
+                }
 
+                if (filter.getFilterAmount()  != null) {
+                    recordStream = recordStream.filter(r -> r.getAmount().equals(filter.getFilterAmount()));
+                }
+                if (filter.getFilterDate()  != null) {
+                    recordStream = recordStream.filter(r -> r.getDate().equals(filter.getFilterDate()));
+                }
+
+        }
+
+        if (sortField != null) {
+            switch (sortField.getSortField()) {
+                case ID:
+                    if (sortField.getSortDirection().equals(ASC)) {
+                        recordStream = recordStream.sorted((e1, e2) -> e1.getId().compareTo(e2.getId()));
+                    } else {
+                        recordStream = recordStream.sorted((e1, e2) -> e2.getId().compareTo(e1.getId()));
+                    }
+                    break;
+                case NUMBER:
+                    if (sortField.getSortDirection().equals(ASC)) {
+                        recordStream = recordStream.sorted((e1, e2) -> e1.getNumber().compareTo(e2.getNumber()));
+                    } else {
+                        recordStream = recordStream.sorted((e1, e2) -> e2.getNumber().compareTo(e1.getNumber()));
+                    }
+                    break;
+                case AMOUNT:
+                    if (sortField.getSortDirection().equals(ASC)) {
+                        recordStream = recordStream.sorted((e1, e2) -> e1.getAmount().compareTo(e2.getAmount()));
+                    } else {
+                        recordStream = recordStream.sorted((e1, e2) -> e2.getAmount().compareTo(e1.getAmount()));
+                    }
+                    break;
+                case DATE:
+                    if (sortField.getSortDirection().equals(ASC)) {
+                        recordStream = recordStream.sorted((e1, e2) -> e1.getDate().compareTo(e2.getDate()));
+                    } else {
+                        recordStream = recordStream.sorted((e1, e2) -> e2.getDate().compareTo(e1.getDate()));
+                    }
+                    break;
+            }
+
+        }
+
+        return recordStream.skip(offset).limit(limit).collect(Collectors.toList());
     }
-
-    return recordStream.skip(offset).limit(limit).collect(toSet());
-  }
 }

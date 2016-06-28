@@ -1,30 +1,41 @@
 package com.kaduchka.common;
 
+import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Date;
 
-public class Record {
-  private long id;
-  private String name;
+public class Record{
+  private Long id;
+  private String number;
   private Date date;
+  private BigDecimal amount;
+  private Collection<String> list;
 
-  public Record(long id, String name, Date date) {
+  public Record(Long id, String number, Date date, BigDecimal amount, Collection<String> list) {
     this.id = id;
-    this.name = name;
+    this.number = number;
     this.date = date;
+    this.amount = amount;
+    this.list = list;
   }
 
-  public long getId() {
+  public Long getId() {
     return id;
   }
 
-
-  public String getName() {
-    return name;
+  public String getNumber() {
+    return number;
   }
-
 
   public Date getDate() {
     return date;
   }
 
+  public BigDecimal getAmount() {
+    return amount;
+  }
+
+  public Collection<String> getList() {
+    return list;
+  }
 }

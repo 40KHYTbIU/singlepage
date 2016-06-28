@@ -7,21 +7,21 @@ recordsApp.controller('RecordsCtrl', function RecordsController($scope, $http) {
 
   $scope.records = [];
 
-  $scope.sortField = "NAME";
-  $scope.sortDirection = "ASC";
+  $scope.sort = {sortField: "NUMBER", sortDirection: "ASC"};
 
-  $scope.filter = {id: null, name: null, date: null};
+  $scope.filter = {id: null, number: null, date: null, amount: null};
 
   $scope.loadRecords = function () {
     var httpRequest = $http({
       method: 'GET',
       url: '/records',
       params: {
-        idFilter: $scope.idFilter,
-        nameFilter: $scope.nameFilter,
-        dateFilter: $scope.dateFilter,
-        sortField: $scope.sortField,
-        sortDirection: $scope.sortDirection,
+        "filterId": $scope.filter.id,
+        "filterNumber": $scope.filter.number,
+        "filterDate": $scope.filter.date,
+        "filterAmount": $scope.filter.amount,
+        "sortField": $scope.sort.sortField,
+        "sortDirection": $scope.sort.sortDirection,
         offset: $scope.recordsCount,
         limit: $scope.pageSize
       }
@@ -40,11 +40,11 @@ recordsApp.controller('RecordsCtrl', function RecordsController($scope, $http) {
   };
 
   $scope.changeSort = function (field) {
-    if ($scope.sortField == field) {
-      $scope.sortDirection = $scope.sortDirection == "ASC" ? "DESC" : "ASC";
+    if ($scope.sort.sortField == field) {
+      $scope.sort.sortDirection = $scope.sort.sortDirection == "ASC" ? "DESC" : "ASC";
     } else {
-      $scope.sortField = field;
-      $scope.sortDirection = "ASC";
+      $scope.sort.sortField = field;
+      $scope.sort.sortDirection = "ASC";
     }
 
     $scope.reload();

@@ -2,33 +2,33 @@ package com.kaduchka.common;
 
 import java.io.Serializable;
 
-public class Sort {
-   public enum Direction {
-    ASC,
-    DESC;
+public class Sort implements Serializable {
+
+
+  private Fields sortField;
+  private Direction sortDirection;
+
+  public Sort(Fields sortField, Direction sortDirection) {
+    this.sortField = sortField;
+    this.sortDirection = sortDirection;
   }
 
-  private Fields field;
-  private Direction direction;
-
-  public Sort(Fields field, Direction direction) {
-    this.field = field;
-    this.direction = direction;
+  public Sort() {
   }
 
-  public Fields getField() {
-    return field;
+  public Fields getSortField() {
+    return sortField;
   }
 
-  public void setField(Fields field) {
-    this.field = field;
+  public void setSortField(Fields sortField) {
+    this.sortField = sortField;
   }
 
-  public Direction getDirection() {
-    return direction;
+  public Direction getSortDirection() {
+    return sortDirection;
   }
 
-  public void setDirection(Direction direction) {
-    this.direction = direction;
+  public void setSortDirection(Direction sortDirection) {
+    this.sortDirection = sortDirection;
   }
 }

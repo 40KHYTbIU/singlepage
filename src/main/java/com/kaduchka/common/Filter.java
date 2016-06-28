@@ -1,43 +1,47 @@
 package com.kaduchka.common;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
-public class Filter {
-  private Long id;
-  private String name;
-  private Date date;
+public class Filter implements Serializable {
+  private Long filterId;
+  private String filterNumber;
+  private Date filterDate;
+  private BigDecimal filterAmount;
 
   public Filter() {
   }
 
-  public Filter(Long id, String name, Date date) {
-    this.id = id;
-    this.name = name;
-    this.date = date;
+  public Long getFilterId() {
+    return filterId;
   }
 
-  public Long getId() {
-    return id;
+  public void setFilterId(Long filterId) {
+    this.filterId = filterId;
   }
 
-  public void setId(Long id) {
-    this.id = id;
+  public String getFilterNumber() {
+    return filterNumber;
   }
 
-  public String getName() {
-    return name;
+  public void setFilterNumber(String filterNumber) {
+    this.filterNumber = filterNumber;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public Date getFilterDate() {
+    return filterDate;
   }
 
-  public Date getDate() {
-    return date;
+  public void setFilterDate(Date filterDate) {
+    this.filterDate = filterDate;
   }
 
-  public void setDate(Date date) {
-    this.date = date;
+  public BigDecimal getFilterAmount() {
+    return filterAmount;
+  }
+
+  public void setFilterAmount(BigDecimal filterAmount) {
+    this.filterAmount = filterAmount;
   }
 }

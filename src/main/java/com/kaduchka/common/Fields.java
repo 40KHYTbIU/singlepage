@@ -2,7 +2,9 @@ package com.kaduchka.common;
 
 public enum Fields {
   ID("id"),
-  NAME("name"),
+  NUMBER("number"),
+  AMOUNT("amount"),
+  LIST("list"),
   DATE("date");
 
   private String name;

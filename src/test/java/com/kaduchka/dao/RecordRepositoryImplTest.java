@@ -1,5 +1,6 @@
 package com.kaduchka.dao;
 
+import com.kaduchka.common.Fields;
 import com.kaduchka.common.Filter;
 import com.kaduchka.common.Record;
 import com.kaduchka.common.Sort;
@@ -8,8 +9,7 @@ import org.junit.Test;
 
 import java.util.Collection;
 
-import static com.kaduchka.common.Fields.NAME;
-import static com.kaduchka.common.Sort.Direction.DESC;
+import static com.kaduchka.common.Direction.DESC;
 
 public class RecordRepositoryImplTest extends TestCase {
 
@@ -28,17 +28,16 @@ public class RecordRepositoryImplTest extends TestCase {
 
   @Test
   public void testGetFilteredRecords() throws Exception {
-    final Filter fieldFilter = new Filter();
-    fieldFilter.setName("999999");
-    final Collection<Record> records = repository.getRecords(fieldFilter, null, 0, 10);
+    final Filter filter = new Filter();
+    filter.setFilterNumber("999999");
+    final Collection<Record> records = repository.getRecords(filter, null, 0, 10);
     assertEquals("Records count should be equals 1", 1, records.size());
   }
 
   @Test
   public void testGetSortedRecords() throws Exception {
-    final Filter fieldFilter = new Filter();
-    final Collection<Record> records = repository.getRecords(fieldFilter, new Sort(NAME, DESC), 0, 1);
-    assertEquals("First record should be equals 999 999", 999_999, records.stream().findFirst().get().getId());
+    final Collection<Record> records = repository.getRecords(null, new Sort(Fields.ID, DESC), 0, 1);
+    assertEquals("First record should be equals 999 999", new Long(999_999), records.stream().findFirst().get().getId());
   }
 
 
