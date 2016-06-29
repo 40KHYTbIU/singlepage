@@ -4,13 +4,14 @@ import com.kaduchka.common.Direction;
 import com.kaduchka.common.DirectionPropertyEditor;
 import com.kaduchka.common.Fields;
 import com.kaduchka.common.FieldsPropertyEditor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.CustomEditorConfigurer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.beans.PropertyEditor;
 import java.util.HashMap;
@@ -32,15 +33,16 @@ public class Application {
   }
 
   @Bean
-  public RedisConnectionFactory lettuceConnectionFactory() {
-    return new LettuceConnectionFactory("192.168.99.100", 6379);
+  public RedisConnectionFactory lettuceConnectionFactory(@Value("${redis.host:localhost}") String redisHost,
+                                                         @Value("${redis.port:6379}") int redisPort) {
+    return new LettuceConnectionFactory(redisHost, redisPort);
   }
 
   @Bean
-  public RedisTemplate redisTemplate() {
-    RedisTemplate<String, Object> redisTemplate = new RedisTemplate();
-    redisTemplate.setEnableTransactionSupport(true);
-    redisTemplate.setConnectionFactory(lettuceConnectionFactory());
+  public StringRedisTemplate redisTemplate(@Value("${redis.host:localhost}") String redisHost,
+                                           @Value("${redis.port:6379}") int redisPort) {
+    StringRedisTemplate redisTemplate = new StringRedisTemplate();
+    redisTemplate.setConnectionFactory(lettuceConnectionFactory(redisHost, redisPort));
     return redisTemplate;
   }
 

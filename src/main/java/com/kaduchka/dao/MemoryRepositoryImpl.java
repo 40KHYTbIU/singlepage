@@ -28,7 +28,7 @@ public class MemoryRepositoryImpl implements RecordRepository {
                 new Record(Long.valueOf(i),
                         "Record#" + i * random.nextInt(3),
                         new Date(new Date().getTime() - random.nextInt(1_000)),
-                        new BigDecimal((((double) random.nextInt(1_000_000)) / 100D)), Collections.singleton("fucNum")))
+                        (((double) random.nextInt(1_000_000)) / 100D), Collections.singleton("fucNum")))
                 .collect(Collectors.toList());
     }
 

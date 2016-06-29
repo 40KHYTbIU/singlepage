@@ -18,8 +18,8 @@ recordsApp.controller('RecordsCtrl', function RecordsController($scope, $http) {
       params: {
         "filterId": $scope.filter.id,
         "filterNumber": $scope.filter.number,
-        "filterDate": $scope.filter.date,
-        "filterAmount": $scope.filter.amount,
+//        "filterDate": $scope.filter.date,
+//        "filterAmount": $scope.filter.amount,
         "sortField": $scope.sort.sortField,
         "sortDirection": $scope.sort.sortDirection,
         offset: $scope.recordsCount,

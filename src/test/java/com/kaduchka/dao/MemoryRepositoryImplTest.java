@@ -29,7 +29,7 @@ public class MemoryRepositoryImplTest extends TestCase {
   @Test
   public void testGetFilteredRecords() throws Exception {
     final Filter filter = new Filter();
-    filter.setFilterNumber("999999");
+    filter.setFilterId(999999L);
     final Collection<Record> records = repository.getRecords(filter, null, 0, 10);
     assertEquals("Records count should be equals 1", 1, records.size());
   }

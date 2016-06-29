@@ -1,6 +1,5 @@
 package com.kaduchka.common;
 
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
 
@@ -8,13 +7,13 @@ public class Record{
   private Long id;
   private String number;
   private Date date;
-  private BigDecimal amount;
+  private Double amount;
   private Collection<String> list;
 
   public Record() {
   }
 
-  public Record(Long id, String number, Date date, BigDecimal amount, Collection<String> list) {
+  public Record(Long id, String number, Date date, Double amount, Collection<String> list) {
     this.id = id;
     this.number = number;
     this.date = date;
@@ -34,7 +33,7 @@ public class Record{
     return date;
   }
 
-  public BigDecimal getAmount() {
+  public Double getAmount() {
     return amount;
   }
 
@@ -54,7 +53,7 @@ public class Record{
     this.date = date;
   }
 
-  public void setAmount(BigDecimal amount) {
+  public void setAmount(Double amount) {
     this.amount = amount;
   }
 
