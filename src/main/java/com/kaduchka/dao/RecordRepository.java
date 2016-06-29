@@ -17,5 +17,5 @@ public interface RecordRepository {
    * @param limit       - records limit
    * @return            - record collection
    */
-  Collection<Record> getRecords(Filter filter, Sort sortField, int offset, int limit);
+  Collection<Record> getRecords(Filter filter, Sort sortField, long offset, long limit);
 }

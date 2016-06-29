@@ -33,7 +33,7 @@ public class MemoryRepositoryImpl implements RecordRepository {
     }
 
     @Override
-    public Collection<Record> getRecords(Filter filter, Sort sortField, int offset, int limit) {
+    public Collection<Record> getRecords(Filter filter, Sort sortField, long offset, long limit) {
         Stream<Record> recordStream = records.stream().parallel();
 
         if (filter != null) {
