@@ -49,8 +49,7 @@ public class RedisRepositoryImpl implements RecordRepository {
 
     private Random random = new Random();
 
-    private AtomicLong recordsCount = new AtomicLong(0);
-
+    private AtomicLong recordsCount;
 
     private DefaultRedisScript<Void> redisScript;
 
@@ -58,7 +57,10 @@ public class RedisRepositoryImpl implements RecordRepository {
     @PostConstruct
     public void init() {
         if (generate) {
-            for (long step = 0 + BATCH_COUNT_SKIP; step < BATCH_COUNT + BATCH_COUNT_SKIP; step++) {
+            recordsCount = new AtomicLong(BATCH_SIZE * BATCH_COUNT_SKIP);
+            System.out.println("Start record id:" + recordsCount.get());
+
+            for (long step = BATCH_COUNT_SKIP; step < BATCH_COUNT + BATCH_COUNT_SKIP; step++) {
                 System.out.print("Inserting for step " + step + "... ");
                 redisTemplate.executePipelined(new SessionCallback<Void>() {
                     public Void execute(RedisOperations operations) throws DataAccessException {
@@ -68,6 +70,7 @@ public class RedisRepositoryImpl implements RecordRepository {
                 });
                 System.out.println("FINISHED");
             }
+            System.out.println("Finished record id:" + recordsCount.get());
         }
 
         redisScript = new DefaultRedisScript<Void>();
@@ -108,13 +111,12 @@ public class RedisRepositoryImpl implements RecordRepository {
 
     @Override
     public Collection<Record> getRecords(Filter filter, Sort sortField, long offset, long limit) {
-
-        redisTemplate.multi();
-
         //Key where save previous result
         String nextKey = "";
 
         if (filter != null) {
+            redisTemplate.multi();
+
             if (filter.getFilterId() != null) {
                 return Collections.singleton(objectMapToRecord(redisTemplate.opsForHash().entries(RECORD + ":" + filter.getFilterId())));
             }
@@ -147,42 +149,7 @@ public class RedisRepositoryImpl implements RecordRepository {
 
         }
         if (sortField != null) {
-            switch (sortField.getSortField()) {
-                case ID:
-                    if (!nextKey.isEmpty()) {
-                        redisTemplate.opsForZSet().intersectAndStore(nextKey, IDS, nextKey + SORTED_TAG);
-                        nextKey = nextKey + SORTED_TAG;
-                    } else {
-                        nextKey = IDS;
-                    }
-                    break;
-//        case NUMBER:
-//          if (!nextKey.isEmpty()) {
-//            redisTemplate.opsForZSet().intersectAndStore(nextKey, NUMBERS, nextKey + SORTED_TAG);
-//            nextKey = nextKey + SORTED_TAG;
-//          } else {
-//            //TODO: WRONG! Should contains IDS not NUMBERS
-//            nextKey = NUMBERS;
-//          }
-//          break;
-                case AMOUNT:
-                    if (!nextKey.isEmpty()) {
-                        redisTemplate.opsForZSet().intersectAndStore(nextKey, IDS_AMOUNT, nextKey + SORTED_TAG);
-                        nextKey = nextKey + SORTED_TAG;
-                    } else {
-                        nextKey = IDS_AMOUNT;
-                    }
-                    break;
-                case DATE:
-                    if (!nextKey.isEmpty()) {
-                        redisTemplate.opsForZSet().intersectAndStore(nextKey, IDS_DATE, nextKey + SORTED_TAG);
-                        nextKey = nextKey + SORTED_TAG;
-                    } else {
-                        nextKey = IDS_DATE;
-                    }
-                    break;
-            }
-
+            nextKey = sortRecords(sortField, nextKey);
         }
 
         Collection<String> idsList = new LinkedList<>();
@@ -201,6 +168,68 @@ public class RedisRepositoryImpl implements RecordRepository {
 
         final Collection<String> finalIdsList = idsList;
         return getRecordsList(finalIdsList);
+    }
+
+    private String sortRecords(Sort sortField, String nextKey) {
+        switch (sortField.getSortField()) {
+            case ID:
+                if (!nextKey.isEmpty()) {
+                    redisTemplate.opsForZSet().intersectAndStore(nextKey, IDS, nextKey + SORTED_TAG);
+                    nextKey = nextKey + SORTED_TAG;
+                } else {
+                    nextKey = IDS;
+                }
+                break;
+//        case NUMBER:
+//          if (!nextKey.isEmpty()) {
+//            redisTemplate.opsForZSet().intersectAndStore(nextKey, NUMBERS, nextKey + SORTED_TAG);
+//            nextKey = nextKey + SORTED_TAG;
+//          } else {
+//            //TODO: WRONG! Should contains IDS not NUMBERS
+//            nextKey = NUMBERS;
+//          }
+//          break;
+            case AMOUNT:
+                if (!nextKey.isEmpty()) {
+                    redisTemplate.opsForZSet().intersectAndStore(nextKey, IDS_AMOUNT, nextKey + SORTED_TAG);
+                    nextKey = nextKey + SORTED_TAG;
+                } else {
+                    nextKey = IDS_AMOUNT;
+                }
+                break;
+            case DATE:
+                if (!nextKey.isEmpty()) {
+                    redisTemplate.opsForZSet().intersectAndStore(nextKey, IDS_DATE, nextKey + SORTED_TAG);
+                    nextKey = nextKey + SORTED_TAG;
+                } else {
+                    nextKey = IDS_DATE;
+                }
+                break;
+        }
+        return nextKey;
+    }
+
+    @Override
+    public long getCount(Filter filter) {
+        String nextKey = IDS;
+        if (filter != null) {
+            if (filter.getFilterId() != null || filter.getFilterNumber() != null) {
+                //cheat
+                return 1;
+            }
+
+            if (filter.getFilterAmount() != null) {
+                List<String> keys = new LinkedList<>();
+                keys.add(IDS_AMOUNT);
+                final String amountTempKey = IDS_AMOUNT + ":" + filter.getFilterAmount().longValue();
+                keys.add(amountTempKey);
+
+                nextKey = amountTempKey;
+
+                redisTemplate.execute(redisScript, keys, "0", filter.getFilterAmount().toString());
+            }
+        }
+        return redisTemplate.opsForZSet().count(nextKey, 0, Double.MAX_VALUE);
     }
 
     private Collection<Record> getRecordsList(Collection<String> finalIdsList) {

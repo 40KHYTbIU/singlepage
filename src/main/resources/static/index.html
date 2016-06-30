@@ -11,9 +11,11 @@
 <body>
 
 <div ng-app="recordsApp">
-  <div ng-controller="RecordsCtrl" data-ng-init="loadRecords()">
+  <div ng-controller="RecordsCtrl" data-ng-init="reload()">
 
-    <div>Sort: {{sort.sortField}} {{sort.sortDirection}}</div> <button ng-click="changeFilter()">Apply filters</button>
+    <div>Sort: {{sort.sortField}} {{sort.sortDirection}}<br/>
+      Count: {{records.count}}
+    </div> <button ng-click="changeFilter()">Apply filters</button>
     <table>
       <thead>
       <tr>

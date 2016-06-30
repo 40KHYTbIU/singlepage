@@ -6,7 +6,6 @@ import com.kaduchka.common.Sort;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -34,25 +33,7 @@ public class MemoryRepositoryImpl implements RecordRepository {
 
     @Override
     public Collection<Record> getRecords(Filter filter, Sort sortField, long offset, long limit) {
-        Stream<Record> recordStream = records.stream().parallel();
-
-        if (filter != null) {
-                if (filter.getFilterId() != null) {
-                    recordStream = recordStream.filter(r -> r.getId().equals(filter.getFilterId()));
-                }
-                if (filter.getFilterNumber()  != null) {
-                    recordStream = recordStream.filter(r -> r.getNumber().contains(filter.getFilterNumber()));
-                }
-
-                if (filter.getFilterAmount()  != null) {
-                    recordStream = recordStream.filter(r -> r.getAmount().equals(filter.getFilterAmount()));
-                }
-                if (filter.getFilterDate()  != null) {
-                    recordStream = recordStream.filter(r -> r.getDate().equals(filter.getFilterDate()));
-                }
-
-        }
-
+        Stream<Record> recordStream = getRecordStream(filter);
         if (sortField != null) {
             switch (sortField.getSortField()) {
                 case ID:
@@ -86,7 +67,34 @@ public class MemoryRepositoryImpl implements RecordRepository {
             }
 
         }
-
         return recordStream.skip(offset).limit(limit).collect(Collectors.toList());
+    }
+
+    private Stream<Record> getRecordStream(Filter filter) {
+        Stream<Record> recordStream = records.stream().parallel();
+
+        if (filter != null) {
+                if (filter.getFilterId() != null) {
+                    recordStream = recordStream.filter(r -> r.getId().equals(filter.getFilterId()));
+                }
+                if (filter.getFilterNumber()  != null) {
+                    recordStream = recordStream.filter(r -> r.getNumber().contains(filter.getFilterNumber()));
+                }
+
+                if (filter.getFilterAmount()  != null) {
+                    recordStream = recordStream.filter(r -> r.getAmount().equals(filter.getFilterAmount()));
+                }
+                if (filter.getFilterDate()  != null) {
+                    recordStream = recordStream.filter(r -> r.getDate().equals(filter.getFilterDate()));
+                }
+
+        }
+        return recordStream;
+    }
+
+    @Override
+    public long getCount(Filter filter) {
+        Stream<Record> recordStream = getRecordStream(filter);
+        return recordStream.count();
     }
 }

@@ -7,9 +7,28 @@ recordsApp.controller('RecordsCtrl', function RecordsController($scope, $http) {
 
   $scope.records = [];
 
+  $scope.records.count = 0;
+
   $scope.sort = {sortField: "ID", sortDirection: "ASC"};
 
   $scope.filter = {id: null, number: null, date: null, amount: null};
+
+  $scope.getCount = function () {
+    var httpRequest = $http({
+      method: 'GET',
+      url: '/records/count',
+      params: {
+        "filterId": $scope.filter.id,
+        "filterNumber": $scope.filter.number,
+        "filterDate": $scope.filter.date,
+        "filterAmount": $scope.filter.amount
+      }
+    }).success(function (data, status) {
+      $scope.records.count = data;
+      console.log("got records count:" + data);
+    });
+
+  };
 
   $scope.loadRecords = function () {
     var httpRequest = $http({
@@ -36,6 +55,8 @@ recordsApp.controller('RecordsCtrl', function RecordsController($scope, $http) {
   $scope.reload = function () {
     $scope.records = [];
     $scope.recordsCount = 0;
+    $scope.getCount();
+
     $scope.loadRecords();
   };
 

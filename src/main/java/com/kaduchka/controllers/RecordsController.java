@@ -8,7 +8,6 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
-import java.util.Collections;
 
 @RestController
 public class RecordsController {
@@ -31,6 +30,13 @@ public class RecordsController {
             @RequestParam("limit") int limit
     ) {
         return recordRepository.getRecords(filter, sort, offset, limit);
+    }
+
+    @RequestMapping("/records/count")
+    public long getCount(
+            Filter filter
+    ) {
+        return recordRepository.getCount(filter);
     }
 
 }
